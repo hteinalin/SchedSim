@@ -87,6 +87,45 @@ void init(){
 	ds->load_state_of_CPU();
 }
 
+void print_stats(){
+	long numProcesses = sched->tq->get_size();
+        long actualWaitTime = 0;
+        long totalWaitTime = 0;
+	long totalTurnaroundTime = 0;
+	long totatlInstructionCount = 0;           
+           while (sched->tq->get_size()) {
+                TCBnode* node;
+                node = sched->tq->dequeue();
+                long actualTurnaroundTime = node->tcb.turnaround_time - node->tcb.wait_time;
+		long instructionCount = node->tcb.instruction_counter;
+                printf("Process PID: %d\n", node->tcb.pid);
+                printf("     Process instruction count: %d\n", instructionCount);
+                printf("     NQ create time: %lu\n", node->tcb.create_time);
+                printf("     RQ arrival time: %lu\n", node->tcb.arrive_time);
+                printf("     First time at processor: %lu\n", node->tcb.wait_time);
+                printf("     Actual Wait time: %lu\n", actualWaitTime);
+                printf("     Turnaround time: %lu\n", node->tcb.turnaround_time);
+                printf("     Actual Turnaround time: %lu\n", actualTurnaroundTime);
+                actualWaitTime += actualTurnaroundTime;
+                totalWaitTime += actualWaitTime;
+	        totalTurnaroundTime += actualTurnaroundTime;
+		totatlInstructionCount += instructionCount;
+            }
+            printf("\n - Average Wait Time: %lu - \n", totalWaitTime/numProcesses);
+	    printf(" - Average Turnaround Time:  %lu -\n", totalTurnaroundTime / numProcesses);	
+	    printf(" - Average Instruction Count:  %lu -\n", totatlInstructionCount / numProcesses);
+		
+
+	    int sched_cost = sched->get_times_called() * SCHED_COST;
+	    int disp_cost = ds->get_times_called() * CONTEXT_SWITCH_COST;
+	    printf("Scheduler ran %d times for %d cost \n", sched->get_times_called(), sched_cost);
+	    printf("Dispatcher ran %d times for %d cost \n", ds->get_times_called(), disp_cost);
+
+	    double throughput =  ((double) (*cpu->get_time() - sched_cost - disp_cost)) / (double) *cpu->get_time();
+	    printf("The algorithm throughput was %f%% efficient.\n", throughput*100);
+        
+}
+
 /*--------------------------------------------------------------------------*/
 /* MAIN ENTRY INTO THE OS */
 /*--------------------------------------------------------------------------*/
@@ -111,7 +150,7 @@ int main(){
 	//All is setup, Entering the main loop
 	printf("Entering main dispatch loop...\n");
 	//A constant loop until the shutdown instruction: 'X'
-	while (ds->run_thread()){ // Runs a thread that is currently on the CPU
+	while (ds->run_thread() && sched->has_remaining_jobs()){ // Runs a thread that is currently on the CPU
 		// save the state of the process
 		ds->save_state_of_CPU();
 		//Gets the next thread from the ready queue
@@ -127,6 +166,7 @@ int main(){
 	printf("Wait Queue size = %d\n",sched->wq->get_size());
 	printf("Terminated Queue size = %d\n",sched->tq->get_size());
 	//one might output other statistics here...
+	print_stats();
 	printf("Press enter to exit:");
 	scanf("Enter");
 	

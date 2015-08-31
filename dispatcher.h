@@ -38,6 +38,7 @@ class Dispatcher
 		Scheduler* sched;
 		TCBnode* cur_TCB_node;
 		TCBnode* new_TCB_node;
+		int times_called;
 
 	public:
 		// constructor
@@ -58,6 +59,7 @@ class Dispatcher
 		void set_CPU(CPU ** _cpu);
 		Scheduler** get_sched();
 		void set_sched(Scheduler ** _sched);
+		int get_times_called();
 
 
 };

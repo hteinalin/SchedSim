@@ -29,18 +29,22 @@
 //#define _REAL_TIME_
 	//Activates Real time scheduling which will use the deadlines
 	//There is currently no data in the deadline field at init()
-#define INIT_PROGRAMS 10	//Number of programs to test with
+#define INIT_PROGRAMS 500	//Number of programs to test with
 	//1 is always added at the end for shutting down the CPU
 	//The maximum is bound by the size of the NEW queue
-#define MAX_CPU_BURSTS 1	//Number of CPU bursts, 
+#define MAX_CPU_BURSTS 5
+//#define MAX_CPU_BURSTS 1	//Number of CPU bursts,
 	//1 means no wait instructions or queues
 	//The maximum is high enough to not worry about (tried 100)
-#define MAX_CPU_BURST_LENGTH 10 //Maximum number of instructions in a burst
+#define MAX_CPU_BURST_LENGTH 1000
+//#define MAX_CPU_BURST_LENGTH 10 //Maximum number of instructions in a burst
 	//The number of E's can be 0 up to at least 100 
 	//W, T or X is always added to the end of any sequence
+//#define QUANTUM 50
 #define QUANTUM ULONG_MAX //time limit on the procesor for a RR Queue Mgr
 	// Setting at ULONG_MAX makes the scheduler use FCFS scheduling
-#define SCHED_PERIOD 10000 //time between when scheduler is run
+#define SCHED_PERIOD 300
+//#define SCHED_PERIOD 10000 //time between when scheduler is run
 	//NOTE: It cannot equal the CONTEXT_SWITCH_COST
 #define END_OF_DISPATCH ULONG_MAX //sets the time the simulation finishes dispatch
 	//END_OF_DISPATCH must be greater than CONTEXT_SWITCH_COST 
@@ -54,8 +58,8 @@
 //in an authoritative or generalizable way. Nevertheless, it should be possible
 //to evaluate algorithms. If that is all we care about, then both costs can be 
 //brought to 0.
-#define CONTEXT_SWITCH_COST 100	//context switch takes more ticks than instructions
-#define SCHED_COST 10000 //scheduling costs more ticks than a context switch
+#define CONTEXT_SWITCH_COST 25	//context switch takes more ticks than instructions
+#define SCHED_COST 250 //scheduling costs more ticks than a context switch
 //In real computers, a 1-2 Ghz processor may run one instruction per nanosecond
 //and make a context switch of 1-10 microseconds. Scheduling takes 1-10 milliseconds
 //Thus, 1 tick for instructions, 1000 for context switch and 1000000 for scheduler
@@ -64,7 +68,7 @@
 /*--------------------------------------------------------------------------*/
 // QUEUE AND DATA STRUCTURE DEFINES 
 /*--------------------------------------------------------------------------*/
-#define MAX_QUEUE_SIZE 100	//governs all TCB Queue data structure max size
+#define MAX_QUEUE_SIZE 501	//governs all TCB Queue data structure max size
 //#define MAX_NEW_QUEUE_SIZE 100	//we don't use any of these
 //#define MAX_READY_QUEUE_SIZE 100	//but we could if Sched changes
 //#define MAX_TERM_QUEUE_SIZE 100	//(in constructor)

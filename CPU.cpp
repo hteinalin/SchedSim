@@ -105,7 +105,7 @@
 	}
 		
 	/* Used by process_thread to process through instructions (CPU burst) */
-	void CPU::advance_instruction(){
+    void CPU::advance_instruction(){
 	//assume that the CPU is pipelined so this doesn't take an extra tick
 		if (result == EXEC_CODE){
 			pc_register++;

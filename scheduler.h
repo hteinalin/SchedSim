@@ -40,10 +40,13 @@ private:
 	long last_run;
 	TCBnode* idle;
 	TCBnode* last;
+	int times_called;
 
 public:
 
-	Scheduler();	
+	Scheduler();
+    void exitCode();
+    void waitQueueCode();
 	void run_scheduler();
 	void load_new_job(uint8_t pid, char* program);
 	void load_last_job(uint8_t pid, char* end);
@@ -58,6 +61,8 @@ public:
 	void set_idle_TCBnode(TCBnode ** _tcb_node);
 	void set_last_run(long l);
 	long get_last_run();
+	bool has_remaining_jobs();
+	int get_times_called();
 
 };
 	

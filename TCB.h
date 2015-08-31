@@ -37,7 +37,8 @@ struct TCB{
 	char* program_ctr;
 	unsigned int register1;		//could be uint16_t
 	unsigned int register2;		//could be uint16_t
-	struct TCB* parent;         //Parent pointer
+    unsigned int instruction_counter; //Counts number of instructions to be used in SJF
+    struct TCB* parent;         //Parent pointer
 	struct TCB* child_list;      //Pointer to list of children
 	struct TCB* sibling_list;    //Pointer to list of siblings
 	char* open_file_list;
@@ -71,7 +72,10 @@ class TCBnode{
 			)	//Constructor for the TCBNode
         	{
         		//Set all the variables of the TCB
-			this->next=NULL;
+            int i = 0;
+                while(pc[i]){i++;}
+            this->tcb.instruction_counter = i;
+            this->next=NULL;
 			this->prev=NULL;
 			this->tcb.pid=pid;
 			this->tcb.result = 0;

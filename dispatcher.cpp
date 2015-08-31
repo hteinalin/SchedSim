@@ -36,6 +36,7 @@ Dispatcher::Dispatcher(CPU ** _cpu, Scheduler ** _sched){
 	//set idle as current and next threads
 	set_new_TCBnode(sched->get_idle_TCBnode());
 	set_cur_TCBnode(sched->get_idle_TCBnode());
+	times_called = 0;
 }
 
 /**
@@ -57,8 +58,9 @@ bool Dispatcher::run_thread(){
 	cpu->process_thread(run_time);
 	
 	// checks to see the return from the CPU
-	if (*(cpu->get_result()) == EXIT_CODE)
+    if (*(cpu->get_result()) == EXIT_CODE){
 		return false;  //This will shut it down
+    }
 	return true; //Gets to the next iteration
 }
 
@@ -67,6 +69,7 @@ bool Dispatcher::run_thread(){
 	Description: Calls sched to choose the next thread 
 */
 void Dispatcher::choose_next_thread(){	
+	times_called++;
 
 	//temporary assignment variable since we access cpu_time a lot
 	unsigned long cpu_time;
@@ -138,6 +141,7 @@ void Dispatcher::save_state_of_CPU(){
 		sched->rq->enqueue(cur_TCB_node);
 	}
 	else if (cur_TCB_node->tcb.result & WAIT_FLAG){
+        cur_TCB_node->tcb.program_ctr += 1;
 		sched->wq->enqueue(cur_TCB_node);
 	}
 	else{
@@ -173,6 +177,8 @@ void Dispatcher::load_state_of_CPU(){
 	cpu_time += CONTEXT_SWITCH_COST;
 	//Context switches takes many hundred cycles
 	cpu->set_time(&cpu_time);
+    printf("PID %d loaded\n", cur_TCB_node->tcb.pid);
+    printf("Instruction Count: %d\n", cur_TCB_node->tcb.instruction_counter);
 }
 
 
@@ -188,6 +194,7 @@ CPU** Dispatcher::get_CPU(){return &cpu;}
 void Dispatcher::set_CPU(CPU ** _cpu){cpu = *_cpu;}
 Scheduler** Dispatcher::get_sched(){return &sched;}
 void Dispatcher::set_sched(Scheduler ** _sched){sched = *_sched;}
+int Dispatcher::get_times_called(){return times_called;}
 
 
 
