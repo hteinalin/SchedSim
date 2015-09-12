@@ -41,8 +41,7 @@ Dispatcher::Dispatcher(CPU ** _cpu, Scheduler ** _sched){
 /**
 	Description: Runs the thread currenty on the CPU
 */
-bool Dispatcher::run_thread(){	
-	
+bool Dispatcher::run_thread(){
 	//In an attempt to stop right on the scheduler period	
 	//Normally an interrupt would stop
 	//So check the time now and take the 
@@ -51,11 +50,11 @@ bool Dispatcher::run_thread(){
 	time_til_sched = (SCHED_PERIOD - *cpu->get_time()) % SCHED_PERIOD;
 	long run_time;	
 	//comparison and assignment
-	run_time = (time_til_sched < QUANTUM) ? time_til_sched : QUANTUM; 
-	
-	//run the thread until cpu hits a non-CPU burst	
+	run_time = (time_til_sched < QUANTUM) ? time_til_sched : QUANTUM;
+    
+	//run the thread until cpu hits a non-CPU burst
 	cpu->process_thread(run_time);
-	
+    
 	// checks to see the return from the CPU
 	if (*(cpu->get_result()) == EXIT_CODE)
 		return false;  //This will shut it down
@@ -102,6 +101,13 @@ void Dispatcher::choose_next_thread(){
 	}
 	else// (new_TCB_node == NULL)
 		new_TCB_node = *sched->get_idle_TCBnode();
+    
+    
+    //If all queues are empty, then load last job into ready queue
+    if((sched->nq->get_size() == 0) && (sched->rq->get_size() == 0) && (sched->wq->get_size() == 0))
+    {
+        new_TCB_node =*sched->get_last_TCBnode();
+    }
 }
 
 
@@ -135,9 +141,11 @@ void Dispatcher::save_state_of_CPU(){
 		sched->tq->enqueue(cur_TCB_node);
 	}
 	else if (cur_TCB_node->tcb.result == EXEC_CODE){
-		sched->rq->enqueue(cur_TCB_node);
+		//Processed not finished, add back to the ready queue
+        sched->rq->enqueue(cur_TCB_node);
 	}
 	else if (cur_TCB_node->tcb.result & WAIT_FLAG){
+        //Processes not finished, items in wait queue, add to back of the wait queue
 		sched->wq->enqueue(cur_TCB_node);
 	}
 	else{

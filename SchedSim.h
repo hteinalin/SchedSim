@@ -40,7 +40,7 @@
 	//W, T or X is always added to the end of any sequence
 #define QUANTUM ULONG_MAX //time limit on the procesor for a RR Queue Mgr
 	// Setting at ULONG_MAX makes the scheduler use FCFS scheduling
-#define SCHED_PERIOD 10000 //time between when scheduler is run
+#define SCHED_PERIOD 50//time between when scheduler is run
 	//NOTE: It cannot equal the CONTEXT_SWITCH_COST
 #define END_OF_DISPATCH ULONG_MAX //sets the time the simulation finishes dispatch
 	//END_OF_DISPATCH must be greater than CONTEXT_SWITCH_COST 
@@ -72,9 +72,9 @@
 /*--------------------------------------------------------------------------*/
 // TCB STATE FLAG DEFINES - state flags hold state, result holds OPCODE
 /*--------------------------------------------------------------------------*/
-#define EXEC_FLAG 0x80
-#define WAIT_FLAG 0x40
-#define TERM_FLAG 0x20
+#define EXEC_FLAG 0x80  //0b10000000
+#define WAIT_FLAG 0x40  //0b01000000
+#define TERM_FLAG 0x20  //0b00100000
 #define PROC_FLAG 0x10	//this indicates thread has been on the processor once
 //note that 4 flags not yet used in state_flags field
 /*--------------------------------------------------------------------------*/

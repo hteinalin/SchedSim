@@ -47,6 +47,9 @@ public:
 	void run_scheduler();
 	void load_new_job(uint8_t pid, char* program);
 	void load_last_job(uint8_t pid, char* end);
+    void resume_threads();
+    void add_new_threads();
+    void sort_ready_queue();
 	//Declare the new, ready, wait and terminated queues
 	TCB_Queue* nq; //new_queue;
 	TCB_Queue* rq; //ready_queue;

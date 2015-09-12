@@ -48,8 +48,7 @@
 	}
 
 	/* dispatcher calls this to run */
-	void CPU::process_thread(int _quantum){
-
+	void CPU::process_thread(int _quantum){        
 		int y = 0;
 		int continue_processing = TRUE;		
 

@@ -136,22 +136,66 @@ void TCB_Queue::display()
     int counter=0;  //Initialize sizeer
 
     //Display the number of nodes in the queue
-    printf("\n\nTCB size: %d.\n", this->size);
+    printf("\TCB size: %d.\n", this->size);
 
     //Loop through the queue
     while(node!=NULL)
     {
         //Print the PID of the current node
-        printf("%d: PID: %d\n",++counter, node->tcb.pid);
+        printf("|%d|", node->tcb.pid);
         node=node->next;    //Move the node pointer to the next node
+    }
+    printf("\n\n");
+}
+
+//This function will allow the removal of a node from anywhere in the queue
+//Return values:
+//      TCBnode* severedNode
+TCBnode* TCB_Queue::pullNode(TCBnode* node)
+{
+    //If node == head, then just dequeu
+    if(node == this->getHead())
+    {
+        this->head = node->next;
+        node->next = NULL;
+        node->prev = NULL;
+        this->size--;
+        return node;
+    }
+    else if(node == this->getTail()) //node == to tail, just remove tail, change tail ptr
+    {
+        printf("2\n");
+        
+        this->tail = node->prev;
+        this->tail->next = NULL;
+        node->prev = NULL;
+        node->next = NULL;
+        this->size--;
+        return node;
+    }
+    else        //Remove from middle of queue, adjust all pointers
+    {
+        TCBnode* next = node->next;
+        TCBnode* previous = node->prev;
+        
+        printf("3\n");
+        
+        node->next->prev = previous;
+        node->prev->next = next;
+        
+        //set pointers to null on node and return severed node
+        node->prev = NULL;
+        node->next = NULL;
+        this->size--;
+        return node;
     }
 }
 
 //Getters and Setters for private variables
 int TCB_Queue::get_max_size(){return max_size;}
-int TCB_Queue::set_max_size(int _max_size){max_size =_max_size;}
+void TCB_Queue::set_max_size(int _max_size){max_size =_max_size;}
 int TCB_Queue::get_size(){return size;}
-int TCB_Queue::set_size(int _size){size =_size;}
+void TCB_Queue::set_size(int _size){size =_size;}
 
 //This function returns a pointer to the tail of the queue
 //Return values:

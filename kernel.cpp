@@ -24,6 +24,7 @@
 #include <time.h>
 #include <stdint.h>
 #include <sys/types.h>
+#include <string.h>
 #include "SchedSim.h"
 #include "CPU.h"	     /* MACHINE */
 #include "scheduler.h"	    /* PROCESS MANAGEMENT */
@@ -46,6 +47,7 @@ Dispatcher* ds;
 
 void init(){
 
+    printf("\n");
 	srand(time(NULL)); //Seed
 	int r_burst_length, w_bursts;// Random Variables
 	int i, j, k, str_idx;
@@ -71,12 +73,23 @@ void init(){
 				str_idx++;
 			}
 			thread_str[str_idx] = '\0';			
-			//printf("%s\n", thread_str);
+			printf("P%d - %s\n", i,thread_str);
 			sched->load_new_job(i, thread_str);
+            
 		}
 	}
 
-	//Add the shutdown process last
+    //Print initial status of all queues
+    printf("\nNew Queue:");
+    sched->nq->display();
+    printf("Wait Queue:");
+    sched->wq->display();
+    printf("Ready Queue:");
+    sched->rq->display();
+    printf("Terminate Queue:");
+    sched->tq->display();
+    
+	//Add the shutdown process to new queue last
 	char* end = "X";	
 	sched->load_last_job(INIT_PROGRAMS+1, end);
 	//this is for the scheduler to exit when the scheduler chooses
@@ -93,6 +106,9 @@ void init(){
 
 int main(){
 
+    //Test Variables
+    int iteration = 0;
+    
 	//Provision a CPU
 	cpu = new CPU;
 
@@ -112,14 +128,41 @@ int main(){
 	printf("Entering main dispatch loop...\n");
 	//A constant loop until the shutdown instruction: 'X'
 	while (ds->run_thread()){ // Runs a thread that is currently on the CPU
+     
+        printf("\n-------Iteration %d------- \n", iteration);
+        
 		// save the state of the process
-		ds->save_state_of_CPU();
+        ds->save_state_of_CPU();
+        
 		//Gets the next thread from the ready queue
-		ds->choose_next_thread();	
-		//Loads state from new TCB onto the CPU
-		ds->load_state_of_CPU(); 
+		ds->choose_next_thread();
 
+		//Loads state from new TCB onto the CPU
+		ds->load_state_of_CPU();
+        
+        //Print status of all queues
+        printf("\nNew Queue:");
+        sched->nq->display();
+        printf("Wait Queue:");
+        sched->wq->display();
+        printf("Ready Queue:");
+        sched->rq->display();
+        printf("Terminate Queue:");
+        sched->tq->display();
+        
+        iteration++;
 	}
+    
+    //Print final status of all queues
+    printf("\nNew Queue:");
+    sched->nq->display();
+    printf("Wait Queue:");
+    sched->wq->display();
+    printf("Ready Queue:");
+    sched->rq->display();
+    printf("Terminate Queue:");
+    sched->tq->display();
+    
 	//a hanging prompt that waits for the user to exit
 	printf("System shutting down\n");
 	printf("New Queue size = %d\n",sched->nq->get_size());
@@ -127,10 +170,9 @@ int main(){
 	printf("Wait Queue size = %d\n",sched->wq->get_size());
 	printf("Terminated Queue size = %d\n",sched->tq->get_size());
 	//one might output other statistics here...
-	printf("Press enter to exit:");
+    printf("Press enter to exit:");
 	scanf("Enter");
-	
-
+    
 	return 1;
 }
   

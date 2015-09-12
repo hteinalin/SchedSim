@@ -42,14 +42,17 @@ class TCB_Queue
 
         //This function displays the queue
         void display();
+    
+        //Allows the removal of a node from the midle of the queue.  For preemption and reordering queues
+        TCBnode* pullNode(TCBnode* node);
 
         //Getters and Setters for private variables
         TCBnode* getTail();
         TCBnode* getHead();
         int get_max_size();
-        int set_max_size(int _max_size);
+        void set_max_size(int _max_size);
         int get_size();
-        int set_size(int _size);
+        void set_size(int _size);
 
         void dealloc();
 
